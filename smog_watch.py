@@ -21,19 +21,18 @@ API_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 
 
 def aqi_label(aqi):
-    """Return the US EPA health label for a US AQI value."""
+    """Return the health label for a US AQI value.
+
+    Simplified three-band scale based on the US AQI:
+    Good (0-100, air is acceptable), Unhealthy (101-200, health risk),
+    Hazardous (over 200, emergency conditions).
+    """
     if aqi is None:
         return "Unknown"
-    if aqi <= 50:
-        return "Good"
     if aqi <= 100:
-        return "Moderate"
-    if aqi <= 150:
-        return "Unhealthy for Sensitive Groups"
+        return "Good"
     if aqi <= 200:
         return "Unhealthy"
-    if aqi <= 300:
-        return "Very Unhealthy"
     return "Hazardous"
 
 
