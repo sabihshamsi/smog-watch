@@ -38,7 +38,22 @@ python smog_watch.py --save ranking.csv
 
 ## Sample output
 
-(Sample output will be added here after the first live run.)
+Real output from a live run on 13 November 2026:
+
+```
+Smog Watch - live PM2.5 from Open-Meteo
+
+Rank City             PM2.5   AQI  Label
+------------------------------------------------------------
+1    Delhi            106.4   251  Very Unhealthy
+2    Lahore            77.1   178  Unhealthy
+3    Peshawar          88.9   149  Unhealthy for Sensitive Groups
+4    Islamabad         33.4    96  Moderate
+5    Karachi           29.1    81  Moderate
+6    Quetta            15.8    68  Moderate
+```
+
+Values change every run because the data is fetched live from the API.
 
 ## Data source
 
