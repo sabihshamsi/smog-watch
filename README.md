@@ -2,13 +2,15 @@
 
 Smog Watch fetches **live PM2.5 air-quality data** for several cities from the
 [Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api),
-labels each city (Good / Moderate / Unhealthy / Hazardous), and ranks the
+labels each city (Good / Unhealthy / Hazardous), and ranks the
 cities from worst to best air. No API key is needed.
 
 ## What it does
 
 - Fetches the current PM2.5 (µg/m³) and US AQI for each city, live, using `requests`.
-- Labels every city with the US EPA category for its AQI.
+- Labels every city Good, Unhealthy or Hazardous, using a simplified
+  three-band scale based on the US AQI (Good 0-100, Unhealthy 101-200,
+  Hazardous over 200).
 - Ranks cities from worst air to cleanest air.
 - Can save a ranked snapshot to a CSV file with `--save`.
 - Can check a single city with `--city`.
@@ -45,12 +47,12 @@ Smog Watch - live PM2.5 from Open-Meteo
 
 Rank City             PM2.5   AQI  Label
 ------------------------------------------------------------
-1    Delhi            106.4   251  Very Unhealthy
+1    Delhi            106.4   251  Hazardous
 2    Lahore            77.1   178  Unhealthy
-3    Peshawar          88.9   149  Unhealthy for Sensitive Groups
-4    Islamabad         33.4    96  Moderate
-5    Karachi           29.1    81  Moderate
-6    Quetta            15.8    68  Moderate
+3    Peshawar          88.9   149  Unhealthy
+4    Islamabad         33.4    96  Good
+5    Karachi           29.1    81  Good
+6    Quetta            15.8    68  Good
 ```
 
 Values change every run because the data is fetched live from the API.
