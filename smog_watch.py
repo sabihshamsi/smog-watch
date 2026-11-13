@@ -5,11 +5,17 @@ Fetches current air-quality data from the Open-Meteo Air Quality API
 
 Usage:
     python smog_watch.py
+    python smog_watch.py --city Lahore
+    python smog_watch.py --save ranking.csv
 """
+
+import argparse
+import csv
+from datetime import datetime, timezone
 
 import requests
 
-from cities import CITIES
+from cities import CITIES, find_city
 
 API_URL = "https://air-quality-api.open-meteo.com/v1/air-quality"
 
@@ -60,10 +66,45 @@ def fetch_city(city):
     }
 
 
+def save_csv(results, path):
+    """Save the ranked results to a CSV file with a fetch timestamp."""
+    fetched_at = datetime.now(timezone.utc).isoformat()
+    with open(path, "w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["rank", "city", "country", "pm2_5_ug_m3", "us_aqi", "label", "reading_time", "fetched_at_utc"])
+        for rank, result in enumerate(results, start=1):
+            writer.writerow([
+                rank,
+                result["city"],
+                result["country"],
+                result["pm2_5"],
+                result["aqi"],
+                aqi_label(result["aqi"]),
+                result["time"],
+                fetched_at,
+            ])
+    print(f"\nSaved {len(results)} rows to {path}")
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Rank cities by live PM2.5 air quality.")
+    parser.add_argument("--city", help="Check a single city by name, e.g. --city Lahore")
+    parser.add_argument("--save", metavar="FILE", help="Save the ranking to a CSV file")
+    args = parser.parse_args()
+
+    if args.city:
+        selected = find_city(args.city)
+        if selected is None:
+            print(f"Unknown city: {args.city}")
+            print("Available cities:", ", ".join(c["name"] for c in CITIES))
+            return
+        cities = [selected]
+    else:
+        cities = CITIES
+
     print("Smog Watch - live PM2.5 from Open-Meteo\n")
     results = []
-    for city in CITIES:
+    for city in cities:
         result = fetch_city(city)
         if result is not None:
             results.append(result)
@@ -80,6 +121,9 @@ def main():
             f"{rank:<5}{result['city']:<14}{pm25:>8}  "
             f"{aqi:>4}  {aqi_label(result['aqi'])}"
         )
+
+    if args.save:
+        save_csv(results, args.save)
 
 
 if __name__ == "__main__":
